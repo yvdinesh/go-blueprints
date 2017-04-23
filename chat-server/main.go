@@ -3,9 +3,11 @@ package main
 import (
 	"flag"
 	"github.com/yvdinesh/go-blueprints/chat-server/chat"
+	"github.com/yvdinesh/go-blueprints/chat-server/trace"
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"sync"
 )
 
@@ -28,7 +30,8 @@ var (
 
 func main() {
 	flag.Parse()
-	r := chat.NewRoom()
+	tracer := trace.NewTracer(os.Stdout)
+	r := chat.NewRoom(chat.WithTracer(tracer))
 	http.Handle("/", &templateHandler{filepath: "templates/client.html"})
 	http.Handle("/room", r)
 	go r.Run()
